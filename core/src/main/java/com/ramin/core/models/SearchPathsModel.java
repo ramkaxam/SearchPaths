@@ -15,17 +15,28 @@
  */
 package com.ramin.core.models;
 
+import com.day.cq.search.PredicateGroup;
+import com.day.cq.search.Query;
+import com.day.cq.search.QueryBuilder;
+import com.day.cq.search.result.Hit;
+import com.day.cq.search.result.SearchResult;
 import com.ramin.core.services.ISearchPdfPaths;
 import com.ramin.core.services.SearchPdfPathsService;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.OSGiService;
+import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 import org.apache.sling.settings.SlingSettingsService;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import java.util.HashMap;
+import java.util.Map;
 
 @Model(adaptables=Resource.class)
 public class SearchPathsModel {
@@ -48,14 +59,56 @@ public class SearchPathsModel {
     @OSGiService
     private ISearchPdfPaths searchService;
 
+
+    @SlingObject
+    private ResourceResolver resolver;
+
+    @Inject
+    QueryBuilder builder;
+
+    Session session;
+
     @PostConstruct
     protected void init() {
         message = "\tSearch Paths Model!\n";
         message += "\tText from dialog: " + prop + "\n";
         message += "\tSearch type: " + searchType + "\n";
-        message += "\tSearch result: " +searchService.getPaths() + "\n";
+
+        if(searchService==null){
+        message += "\tSearch result: " +"no injected" + "\n";}else
+            message += "\tSearch result: " +searchService.getPaths(builder, session, resolver) + "\n";
+
+
         message += "\tThis is instance: " + settings.getSlingId() + "\n";
         message += "\tResource type is: " + resourceType + "\n";
+
+
+
+//        session = resolver.adaptTo(Session.class);
+//        Map<String, String> map = new HashMap<String, String>();
+//
+//        map.put("path", "/content/searchpaths");
+//        map.put("type", "cq:Page");
+//
+//        Query query = builder.createQuery(PredicateGroup.create(map), session);
+//
+//        SearchResult result = query.getResult();
+//        int hitsPerPage = result.getHits().size();
+//
+//        message+=" hits="+hitsPerPage;
+//
+//        for (Hit hit : result.getHits()) {
+//            String path="";
+//            try {
+//                path = hit.getPath();
+//            } catch (RepositoryException e) {
+//                message+="[!repoexceptopn!]";
+//            }
+//            message+=" "+path+"\n";
+//
+//
+//        }
+
     }
 
     public String getMessage() {
