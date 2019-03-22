@@ -16,6 +16,30 @@
                             sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                             fieldLabel="Text"
                             name="./text"/>
+                    <modesearchselect
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/foundation/form/select"
+                            emptyText="Select type of search"
+                            name="./myselect"
+                    >
+                        <items
+                                
+                                jcr:primaryType="nt:unstructured"
+                        >
+                            <option1
+
+                                    jcr:primaryType="nt:unstructured"
+                                    text="PDF"
+                            />
+                            <option2
+
+                                    jcr:primaryType="nt:unstructured"
+                                    text="Assets"
+                            />
+                        </items>
+
+                    </modesearchselect>
+
                 </items>
             </column>
         </items>
