@@ -42,9 +42,11 @@ public class SearchPdfPathsService implements ISearchPdfPaths{
         session = resolver.adaptTo(Session.class);
         Map<String, String> map = new HashMap<String, String>();
 
-        map.put("path", "/content/searchpaths");
-        map.put("type", "cq:Page");
+        map.put("path", "/content");
+        //map.put("type", "cq:Page");
+            map.put("nodename", "*.pdf");
 
+//nodename=*.jar
         Query query = builder.createQuery(PredicateGroup.create(map), session);
 
         SearchResult result = query.getResult();

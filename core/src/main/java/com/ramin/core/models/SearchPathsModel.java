@@ -84,31 +84,6 @@ public class SearchPathsModel {
 
 
 
-//        session = resolver.adaptTo(Session.class);
-//        Map<String, String> map = new HashMap<String, String>();
-//
-//        map.put("path", "/content/searchpaths");
-//        map.put("type", "cq:Page");
-//
-//        Query query = builder.createQuery(PredicateGroup.create(map), session);
-//
-//        SearchResult result = query.getResult();
-//        int hitsPerPage = result.getHits().size();
-//
-//        message+=" hits="+hitsPerPage;
-//
-//        for (Hit hit : result.getHits()) {
-//            String path="";
-//            try {
-//                path = hit.getPath();
-//            } catch (RepositoryException e) {
-//                message+="[!repoexceptopn!]";
-//            }
-//            message+=" "+path+"\n";
-//
-//
-//        }
-
     }
 
     public String getMessage() {
