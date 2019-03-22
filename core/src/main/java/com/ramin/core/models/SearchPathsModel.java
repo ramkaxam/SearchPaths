@@ -15,9 +15,12 @@
  */
 package com.ramin.core.models;
 
+import com.ramin.core.services.ISearchPdfPaths;
+import com.ramin.core.services.SearchPdfPathsService;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.OSGiService;
 import org.apache.sling.settings.SlingSettingsService;
 
 import javax.annotation.PostConstruct;
@@ -35,9 +38,14 @@ public class SearchPathsModel {
 
     private String message;
 
+
+    @OSGiService
+    private ISearchPdfPaths searchService;
+
     @PostConstruct
     protected void init() {
         message = "\tSearch Paths Model!\n";
+        message += "\tSearch result: " +searchService.getPaths() + "\n";
         message += "\tThis is instance: " + settings.getSlingId() + "\n";
         message += "\tResource type is: " + resourceType + "\n";
     }
