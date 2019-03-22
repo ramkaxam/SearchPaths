@@ -23,7 +23,7 @@
                             name="./myselect"
                     >
                         <items
-                                
+
                                 jcr:primaryType="nt:unstructured"
                         >
                             <option1

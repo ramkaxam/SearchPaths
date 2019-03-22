@@ -42,6 +42,9 @@ public class SearchPathsModel {
     @Inject @Named("text") @Default(values="Prop is not setted")
     private String prop;
 
+    @Inject @Named("myselect") @Default(values="Prop is not setted")
+    private String searchType;
+
     @OSGiService
     private ISearchPdfPaths searchService;
 
@@ -49,6 +52,7 @@ public class SearchPathsModel {
     protected void init() {
         message = "\tSearch Paths Model!\n";
         message += "\tText from dialog: " + prop + "\n";
+        message += "\tSearch type: " + searchType + "\n";
         message += "\tSearch result: " +searchService.getPaths() + "\n";
         message += "\tThis is instance: " + settings.getSlingId() + "\n";
         message += "\tResource type is: " + resourceType + "\n";
