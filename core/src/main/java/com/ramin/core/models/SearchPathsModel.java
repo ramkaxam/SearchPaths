@@ -20,6 +20,7 @@ import com.day.cq.search.Query;
 import com.day.cq.search.QueryBuilder;
 import com.day.cq.search.result.Hit;
 import com.day.cq.search.result.SearchResult;
+import com.ramin.core.services.ISearchAssetsPaths;
 import com.ramin.core.services.ISearchPdfPaths;
 import com.ramin.core.services.SearchPdfPathsService;
 import org.apache.sling.api.resource.Resource;
@@ -47,7 +48,7 @@ public class SearchPathsModel {
     @Inject @Named("sling:resourceType") @Default(values="No resourceType")
     protected String resourceType;
 
-    private String message;
+    private String message="";
 
 
     @Inject @Named("text") @Default(values="/content")
@@ -59,6 +60,8 @@ public class SearchPathsModel {
     @OSGiService
     private ISearchPdfPaths searchPdfService;
 
+    @OSGiService
+    private ISearchAssetsPaths searchAssetsService;
 
     @SlingObject
     private ResourceResolver resolver;
@@ -66,24 +69,28 @@ public class SearchPathsModel {
     @Inject
     QueryBuilder builder;
 
-    Session session;
+
 
     @PostConstruct
     protected void init() {
-        searchPdfService.configure(builder,session,resolver);
+        message+="Searching in: "+usedSearchPath+"\n";
+        switch (searchType){
+            case "Assets":
+                searchAssetsService.configure(resolver);
+                message+="Searching assets:\n";
+                message +=searchAssetsService.getPaths(usedSearchPath) + "\n";
+                break;
+            default: case "PDF":
+                searchPdfService.configure(builder,resolver);
+                message+="Searching pdfs:\n";
+                message +=searchPdfService.getPaths(usedSearchPath) + "\n";
+                break;
 
-        message = "\tSearch Paths Model!\n";
-        message += "\tText from dialog: " + usedSearchPath + "\n";
-        message += "\tSearch type: " + searchType + "\n";
-
-        if(searchPdfService==null){
-            message += "\tSearch result: " +"no injected" + "\n";}
-        else
-            message += "\tSearch result: " +searchPdfService.getPaths(usedSearchPath) + "\n";
 
 
-        message += "\tThis is instance: " + settings.getSlingId() + "\n";
-        message += "\tResource type is: " + resourceType + "\n";
+        }
+
+
 
 
 

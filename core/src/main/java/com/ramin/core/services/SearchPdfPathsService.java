@@ -22,19 +22,19 @@ import java.util.Map;
         service = { ISearchPdfPaths.class },
         name = "SearchPdfPathsServiceComp",
         property = {
-                "myOwnProperty=Ramin"
+                "myOwnProperty=SearchPdf"
         }
 )
 public class SearchPdfPathsService implements ISearchPdfPaths{
     QueryBuilder builder;
-    Session session;
+
     ResourceResolver resolver;
 
-    private String message="no message";
 
-    public void configure(QueryBuilder builder, Session session, ResourceResolver resolver){
+
+    public void configure(QueryBuilder builder, ResourceResolver resolver){
         this.builder=builder;
-        this.session=session;
+
         this.resolver=resolver;
     }
 
@@ -45,36 +45,45 @@ public class SearchPdfPathsService implements ISearchPdfPaths{
 
 
     public String getPaths(String usedSearchPath){
-        try{
+        Session session;
+        String message="";
+
+
+
         session = resolver.adaptTo(Session.class);
         Map<String, String> map = new HashMap<String, String>();
 
         map.put("path", usedSearchPath);
-        //map.put("type", "cq:Page");
-            map.put("nodename", "*.pdf");
+        map.put("nodename", "*.pdf");
 
-//nodename=*.jar
         Query query = builder.createQuery(PredicateGroup.create(map), session);
 
         SearchResult result = query.getResult();
         int hitsPerPage = result.getHits().size();
 
-        message+=" hits="+hitsPerPage;
+        if(hitsPerPage==0){
+            message="No data";
+        }else{
 
-        for (Hit hit : result.getHits()) {
-            String path="";
-            try {
-                path = hit.getPath();
-            } catch (RepositoryException e) {
-                message+="[!repoexceptopn!]";
+            try{
+           // message+=" hits="+hitsPerPage;
+
+            for (Hit hit : result.getHits()) {
+                String path="";
+                try {
+                    path = hit.getPath();
+                } catch (RepositoryException e) {
+                    message+="[!repoexceptopn!]";
+                }
+                message+=path+"\n";
+
+
             }
-            message+=" "+path+"\n";
-
-
-        }
         }catch(Exception ex){
-            message+="failde exs";
+                message+=ex;
+            }
         }
+
 
 
 
@@ -82,4 +91,5 @@ public class SearchPdfPathsService implements ISearchPdfPaths{
 
         return message;
     }
+
 }
