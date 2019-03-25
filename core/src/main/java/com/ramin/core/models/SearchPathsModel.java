@@ -50,14 +50,14 @@ public class SearchPathsModel {
     private String message;
 
 
-    @Inject @Named("text") @Default(values="Prop is not setted")
-    private String prop;
+    @Inject @Named("text") @Default(values="/content")
+    private String usedSearchPath;
 
     @Inject @Named("myselect") @Default(values="Prop is not setted")
     private String searchType;
 
     @OSGiService
-    private ISearchPdfPaths searchService;
+    private ISearchPdfPaths searchPdfService;
 
 
     @SlingObject
@@ -70,13 +70,16 @@ public class SearchPathsModel {
 
     @PostConstruct
     protected void init() {
+        searchPdfService.configure(builder,session,resolver);
+
         message = "\tSearch Paths Model!\n";
-        message += "\tText from dialog: " + prop + "\n";
+        message += "\tText from dialog: " + usedSearchPath + "\n";
         message += "\tSearch type: " + searchType + "\n";
 
-        if(searchService==null){
-        message += "\tSearch result: " +"no injected" + "\n";}else
-            message += "\tSearch result: " +searchService.getPaths(builder, session, resolver) + "\n";
+        if(searchPdfService==null){
+            message += "\tSearch result: " +"no injected" + "\n";}
+        else
+            message += "\tSearch result: " +searchPdfService.getPaths(usedSearchPath) + "\n";
 
 
         message += "\tThis is instance: " + settings.getSlingId() + "\n";

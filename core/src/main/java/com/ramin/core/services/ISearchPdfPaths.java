@@ -6,5 +6,6 @@ import org.apache.sling.api.resource.ResourceResolver;
 import javax.jcr.Session;
 
 public interface ISearchPdfPaths {
-    String getPaths(QueryBuilder builder, Session session, ResourceResolver resolver);
+    void configure(QueryBuilder builder, Session session, ResourceResolver resolver);
+    String getPaths(String usedSearchPath);
 }

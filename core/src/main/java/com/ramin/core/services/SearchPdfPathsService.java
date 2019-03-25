@@ -26,10 +26,17 @@ import java.util.Map;
         }
 )
 public class SearchPdfPathsService implements ISearchPdfPaths{
-
+    QueryBuilder builder;
+    Session session;
+    ResourceResolver resolver;
 
     private String message="no message";
 
+    public void configure(QueryBuilder builder, Session session, ResourceResolver resolver){
+        this.builder=builder;
+        this.session=session;
+        this.resolver=resolver;
+    }
 
 
 
@@ -37,12 +44,12 @@ public class SearchPdfPathsService implements ISearchPdfPaths{
 
 
 
-    public String getPaths(QueryBuilder builder, Session session, ResourceResolver resolver){
+    public String getPaths(String usedSearchPath){
         try{
         session = resolver.adaptTo(Session.class);
         Map<String, String> map = new HashMap<String, String>();
 
-        map.put("path", "/content");
+        map.put("path", usedSearchPath);
         //map.put("type", "cq:Page");
             map.put("nodename", "*.pdf");
 
