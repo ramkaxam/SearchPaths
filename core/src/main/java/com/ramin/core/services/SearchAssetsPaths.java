@@ -30,13 +30,9 @@ public class SearchAssetsPaths implements ISearchAssetsPaths{
         try {
             session = resolver.adaptTo(Session.class);
             javax.jcr.query.QueryManager queryManager = session.getWorkspace().getQueryManager();
-            //usedSearchPath="";//"/content/searchpaths"
-
 
 
             String sqlStatement="SELECT * FROM [dam:Asset] as s"+" WHERE ISDESCENDANTNODE(s,\'"+usedSearchPath+"\')";
-//            message+=sqlStatement;
-//            message+="\n";
 
             javax.jcr.query.Query query = queryManager.createQuery(sqlStatement,"JCR-SQL2");
 

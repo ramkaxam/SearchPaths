@@ -41,20 +41,13 @@ import java.util.Map;
 
 @Model(adaptables=Resource.class)
 public class SearchPathsModel {
-
-    @Inject
-    private SlingSettingsService settings;
-
-    @Inject @Named("sling:resourceType") @Default(values="No resourceType")
-    protected String resourceType;
-
     private String message="";
 
 
     @Inject @Named("text") @Default(values="/content")
     private String usedSearchPath;
 
-    @Inject @Named("myselect") @Default(values="Prop is not setted")
+    @Inject @Named("myselect") @Default(values="Assets")
     private String searchType;
 
     @OSGiService
