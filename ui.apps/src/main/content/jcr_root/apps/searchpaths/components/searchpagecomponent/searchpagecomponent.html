@@ -15,7 +15,7 @@
 */-->
 <pre data-sly-use.hello="com.ramin.core.models.SearchPathsModel">
 <dl data-sly-list="${hello.pathsResult}">
-    ${itemList.index}:${item}
+    <a href="${item}">${itemList.index} - ${item}</a>
 </dl>
 
 <br>
