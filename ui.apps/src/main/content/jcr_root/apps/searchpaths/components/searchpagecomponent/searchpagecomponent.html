@@ -14,5 +14,13 @@
     limitations under the License.
 */-->
 <pre data-sly-use.hello="com.ramin.core.models.SearchPathsModel">
-${hello.message}
+<dl data-sly-list="${hello.pathsResult}">
+    ${itemList.index}:${item}
+</dl>
+
+<br>
+    ${hello.message}
+
+
+
 </pre>

@@ -4,15 +4,20 @@ import com.day.cq.search.Query;
 import com.day.cq.search.QueryBuilder;
 import com.day.cq.search.result.Hit;
 import com.day.cq.search.result.SearchResult;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.models.annotations.injectorspecific.OSGiService;
 import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 import org.osgi.service.component.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -25,55 +30,45 @@ import java.util.Map;
                 "myOwnProperty=SearchPdf"
         }
 )
-public class SearchPdfPathsService implements ISearchPdfPaths{
-    QueryBuilder builder;
-    ResourceResolver resolver;
+public class SearchPdfPathsService implements ISearchPdfPaths, ISearchPaths{
+    private static final Logger logger = LoggerFactory.getLogger(SearchPdfPathsService.class);
 
+    public List<String> getPaths(Resource resource, String usedSearchPath){
+        logger.info("Pdf calling");
+        ArrayList<String> ret=new ArrayList<>();
+        ResourceResolver resolver = resource.getResourceResolver();
+        QueryBuilder builder = resolver.adaptTo(QueryBuilder.class);
+        Session session = resolver.adaptTo(Session.class);
 
-    public void configure(QueryBuilder builder, ResourceResolver resolver){
-        this.builder=builder;
-        this.resolver=resolver;
-    }
-
-
-
-
-    public String getPaths(String usedSearchPath){
-        Session session;
-        String message="";
-        session = resolver.adaptTo(Session.class);
         Map<String, String> map = new HashMap<String, String>();
-
         map.put("path", usedSearchPath);
         map.put("nodename", "*.pdf");
 
         Query query = builder.createQuery(PredicateGroup.create(map), session);
 
         SearchResult result = query.getResult();
-        int hitsPerPage = result.getHits().size();
 
-        if(hitsPerPage==0){
-            message="No data";
-        }else{
 
-            try{
-            for (Hit hit : result.getHits()) {
-                String path="";
-                try {
-                    path = hit.getPath();
-                } catch (RepositoryException e) {
-                    message+="[!repoexceptopn!]";
+        try{
+                for (Hit hit : result.getHits()) {
+                    String path="";
+                    try {
+                        path = hit.getPath();
+                    } catch (RepositoryException e) {
+                        logger.error(e.toString());
+                    }
+                    ret.add(path);
+
+
                 }
-                message+=path+"\n";
 
 
-            }
-            }catch(Exception ex){
-                message+=ex;
-            }
+        }catch(Exception ex){
+                logger.error(ex.toString());
         }
 
-        return message;
-    }
 
+        return ret;
+
+    }
 }

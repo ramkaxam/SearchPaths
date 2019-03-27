@@ -28,19 +28,23 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.OSGiService;
+import org.apache.sling.models.annotations.injectorspecific.Self;
 import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 import org.apache.sling.settings.SlingSettingsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Model(adaptables=Resource.class)
 public class SearchPathsModel {
+    public static final Logger logger = LoggerFactory.getLogger(SearchPathsModel.class);
+
     private String message="";
 
 
@@ -56,27 +60,31 @@ public class SearchPathsModel {
     @OSGiService
     private ISearchAssetsPaths searchAssetsService;
 
-    @SlingObject
-    private ResourceResolver resolver;
+    @Self
+    private Resource resource;
 
-    @Inject
-    QueryBuilder builder;
 
+
+
+
+    private List<String> pathsResult=new ArrayList<>();
 
 
     @PostConstruct
     protected void init() {
+
+        logger.info(" doing request");
         message+="Searching in: "+usedSearchPath+"\n";
         switch (searchType){
             case "Assets":
-                searchAssetsService.configure(resolver);
+
                 message+="Searching assets:\n";
-                message +=searchAssetsService.getPaths(usedSearchPath) + "\n";
+                pathsResult=searchAssetsService.getPaths(resource,usedSearchPath);
                 break;
             default: case "PDF":
-                searchPdfService.configure(builder,resolver);
+
                 message+="Searching pdfs:\n";
-                message +=searchPdfService.getPaths(usedSearchPath) + "\n";
+                pathsResult=searchPdfService.getPaths(resource,usedSearchPath);
                 break;
 
 
@@ -91,5 +99,14 @@ public class SearchPathsModel {
 
     public String getMessage() {
         return message;
+    }
+
+
+    public List<String> getPathsResult(){
+
+        //return new ArrayList<>(Arrays.asList(new String[]{"1","2"}));
+
+        return pathsResult;
+
     }
 }
