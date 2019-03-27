@@ -48,10 +48,10 @@ public class SearchPathsModel {
     private String message="";
 
 
-    @Inject @Named("text") @Default(values="/content")
+    @Inject @Named("usedPathForSearch") @Default(values="/content/dam")
     private String usedSearchPath;
 
-    @Inject @Named("myselect") @Default(values="Assets")
+    @Inject @Named("selectedTypeForSearch") @Default(values="Assets")
     private String searchType;
 
     @OSGiService

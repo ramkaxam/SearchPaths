@@ -18,10 +18,11 @@
                     jcr:primaryType="nt:unstructured"
                     sling:resourceType="wcm/foundation/components/responsivegrid">
                 <searchpagecomponent
+                        selectedTypeForSearch="Assets"
+                        usedPathForSearch="/content/dam"
                         jcr:lastModifiedBy="admin"
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="searchpaths/components/searchpagecomponent"/>
-
             </responsivegrid>
         </root>
     </jcr:content>
