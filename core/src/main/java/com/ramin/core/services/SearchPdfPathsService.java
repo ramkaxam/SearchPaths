@@ -30,11 +30,12 @@ import java.util.Map;
                 "myOwnProperty=SearchPdf"
         }
 )
+
 public class SearchPdfPathsService implements ISearchPdfPaths, ISearchPaths{
     private static final Logger logger = LoggerFactory.getLogger(SearchPdfPathsService.class);
 
     public List<String> getPaths(Resource resource, String usedSearchPath){
-        logger.info("Pdf calling");
+        logger.info("Pdf calling "+SearchPdfPathsService.class.getName());
         ArrayList<String> ret=new ArrayList<>();
         ResourceResolver resolver = resource.getResourceResolver();
         QueryBuilder builder = resolver.adaptTo(QueryBuilder.class);

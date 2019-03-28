@@ -20,12 +20,11 @@ import com.day.cq.search.Query;
 import com.day.cq.search.QueryBuilder;
 import com.day.cq.search.result.Hit;
 import com.day.cq.search.result.SearchResult;
-import com.ramin.core.services.ISearchAssetsPaths;
-import com.ramin.core.services.ISearchPdfPaths;
-import com.ramin.core.services.SearchPdfPathsService;
+import com.ramin.core.services.*;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.models.annotations.Default;
+import org.apache.sling.models.annotations.Filter;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.OSGiService;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -45,20 +44,30 @@ import java.util.*;
 public class SearchPathsModel {
     public static final Logger logger = LoggerFactory.getLogger(SearchPathsModel.class);
 
-    private String message="";
-
-
     @Inject @Named("usedPathForSearch") @Default(values="/content/dam")
-    private String usedSearchPath;
+    private String usedPathForSearch;
+
+
 
     @Inject @Named("selectedTypeForSearch") @Default(values="Assets")
-    private String searchType;
+    private String selectedTypeForSearch;
+
+    //@Filter("(paths=/bin/something)")
 
     @OSGiService
     private ISearchPdfPaths searchPdfService;
 
     @OSGiService
     private ISearchAssetsPaths searchAssetsService;
+
+//    @OSGiService/*(filter="(component.name=SearchPdfPathsServiceComp)")*/
+//    @Filter("component.name=SearchPdfPathsServiceComp")
+//    private ISearchPaths searchPdfService;
+//
+//    @OSGiService/*(filter="(component.name=SearchAssetsPathsServiceComp)")*/
+//    @Filter("component.name=SearchAssetsPathsServiceComp")
+//    private ISearchPaths searchAssetsService;
+
 
     @Self
     private Resource resource;
@@ -72,19 +81,13 @@ public class SearchPathsModel {
 
     @PostConstruct
     protected void init() {
-
         logger.info(" doing request");
-        message+="Searching in: "+usedSearchPath+"\n";
-        switch (searchType){
+        switch (selectedTypeForSearch){
             case "Assets":
-
-                message+="Searching assets:\n";
-                pathsResult=searchAssetsService.getPaths(resource,usedSearchPath);
+                pathsResult=searchAssetsService.getPaths(resource,usedPathForSearch);
                 break;
             default: case "PDF":
-
-                message+="Searching pdfs:\n";
-                pathsResult=searchPdfService.getPaths(resource,usedSearchPath);
+                pathsResult=searchPdfService.getPaths(resource,usedPathForSearch);
                 break;
 
 
@@ -97,16 +100,19 @@ public class SearchPathsModel {
 
     }
 
-    public String getMessage() {
-        return message;
-    }
 
 
     public List<String> getPathsResult(){
-
-        //return new ArrayList<>(Arrays.asList(new String[]{"1","2"}));
-
         return pathsResult;
 
     }
+
+    public String getUsedPathForSearch() {
+        return usedPathForSearch;
+    }
+
+    public String getSelectedTypeForSearch() {
+        return selectedTypeForSearch;
+    }
+
 }
