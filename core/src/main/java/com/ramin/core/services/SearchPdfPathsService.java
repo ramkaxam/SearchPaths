@@ -24,14 +24,14 @@ import java.util.Map;
 
 @Component(
         immediate=true,
-        service = { ISearchPdfPaths.class },
+        service = { /*ISearchPdfPaths.class*/ ISearchPaths.class },
         name = "SearchPdfPathsServiceComp",
         property = {
                 "myOwnProperty=SearchPdf"
         }
 )
 
-public class SearchPdfPathsService implements ISearchPdfPaths, ISearchPaths{
+public class SearchPdfPathsService implements ISearchPaths{
     private static final Logger logger = LoggerFactory.getLogger(SearchPdfPathsService.class);
 
     public List<String> getPaths(Resource resource, String usedSearchPath){

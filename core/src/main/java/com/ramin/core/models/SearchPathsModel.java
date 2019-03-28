@@ -54,19 +54,19 @@ public class SearchPathsModel {
 
     //@Filter("(paths=/bin/something)")
 
-    @OSGiService
-    private ISearchPdfPaths searchPdfService;
-
-    @OSGiService
-    private ISearchAssetsPaths searchAssetsService;
-
-//    @OSGiService/*(filter="(component.name=SearchPdfPathsServiceComp)")*/
-//    @Filter("component.name=SearchPdfPathsServiceComp")
-//    private ISearchPaths searchPdfService;
+//    @OSGiService
+//    private ISearchPdfPaths searchPdfService;
 //
-//    @OSGiService/*(filter="(component.name=SearchAssetsPathsServiceComp)")*/
-//    @Filter("component.name=SearchAssetsPathsServiceComp")
-//    private ISearchPaths searchAssetsService;
+//    @OSGiService
+//    private ISearchAssetsPaths searchAssetsService;
+
+    @OSGiService(filter="(component.name=SearchPdfPathsServiceComp)")
+    //@Filter("component.name=SearchPdfPathsServiceComp")
+    private ISearchPaths searchPdfService;
+
+    @OSGiService(filter="(component.name=SearchAssetsPathsServiceComp)")
+    //@Filter("component.name=SearchAssetsPathsServiceComp")
+    private ISearchPaths searchAssetsService;
 
 
     @Self

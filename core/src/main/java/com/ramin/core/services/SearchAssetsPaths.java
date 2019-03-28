@@ -14,13 +14,13 @@ import java.util.List;
 
 @Component(
         immediate=true,
-        service = { ISearchAssetsPaths.class },
+        service = { /*ISearchAssetsPaths.class*/ ISearchPaths.class},
         name = "SearchAssetsPathsServiceComp",
         property = {
                 "myOwnProperty=SearchAssets"
         }
 )
-public class SearchAssetsPaths implements ISearchAssetsPaths, ISearchPaths{
+public class SearchAssetsPaths implements ISearchPaths{
     private static final Logger logger = LoggerFactory.getLogger(SearchAssetsPaths.class);
     private static final String templSqlStatement="SELECT * FROM [dam:Asset] as s WHERE ISDESCENDANTNODE(s,'@@@@')"+"AND (NAME() LIKE '%.jpg' OR NAME() LIKE '%.png')";
     public List<String> getPaths(Resource resource, String usedSearchPath){
