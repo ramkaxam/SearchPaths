@@ -47,37 +47,19 @@ public class SearchPathsModel {
     @Inject @Named("usedPathForSearch") @Default(values="/content/dam")
     private String usedPathForSearch;
 
-
-
     @Inject @Named("selectedTypeForSearch") @Default(values="Assets")
     private String selectedTypeForSearch;
 
-    //@Filter("(paths=/bin/something)")
-
-//    @OSGiService
-//    private ISearchPdfPaths searchPdfService;
-//
-//    @OSGiService
-//    private ISearchAssetsPaths searchAssetsService;
-
     @OSGiService(filter="(component.name=SearchPdfPathsServiceComp)")
-    //@Filter("component.name=SearchPdfPathsServiceComp")
     private ISearchPaths searchPdfService;
 
     @OSGiService(filter="(component.name=SearchAssetsPathsServiceComp)")
-    //@Filter("component.name=SearchAssetsPathsServiceComp")
     private ISearchPaths searchAssetsService;
-
 
     @Self
     private Resource resource;
 
-
-
-
-
     private List<String> pathsResult=new ArrayList<>();
-
 
     @PostConstruct
     protected void init() {
@@ -89,15 +71,7 @@ public class SearchPathsModel {
             default: case "PDF":
                 pathsResult=searchPdfService.getPaths(resource,usedPathForSearch);
                 break;
-
-
-
         }
-
-
-
-
-
     }
 
 
