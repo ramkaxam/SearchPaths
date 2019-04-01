@@ -1,9 +1,10 @@
 <pre data-sly-use.hello="com.ramin.core.models.SearchPathsModel">
-Searching in path: ${hello.usedPathForSearch}<br>
-Type: ${hello.selectedTypeForSearch}<br>
+Searching in path: ${hello.usedPathForSearch}
+Type: ${hello.selectedTypeForSearch}
+Max amount: ${hello.maxAmount}
 Searched nodes:
 <p data-sly-test="${hello.pathsResult.size==0}">No data</p>
 <dl data-sly-test="${hello.pathsResult.size!=0}" data-sly-list="${hello.pathsResult}">
-    <a href="${item}">${itemList.index} - ${item}</a>
+    <a href="${item}">${itemList.count} - ${item}</a>
 </dl>
 </pre>

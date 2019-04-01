@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ISearchPaths {
     List<String> getPaths(Resource resource, String usedSearchPath);
+    int getMaxAmount();
 }

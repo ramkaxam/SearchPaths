@@ -66,10 +66,9 @@ public class SearchPdfPathsService implements ISearchPaths{
 
     }
 
+
     public List<String> getPaths(Resource resource, String usedSearchPath){
         logger.info("Pdf getPaths call ");
-        logger.info("My prop max size: "+config.max_size());
-
         ArrayList<String> ret=new ArrayList<>();
         ResourceResolver resolver = resource.getResourceResolver();
         QueryBuilder builder = resolver.adaptTo(QueryBuilder.class);
@@ -95,6 +94,8 @@ public class SearchPdfPathsService implements ISearchPaths{
                 logger.error(ex.toString());
         }
         return ret;
-
+    }
+    public int getMaxAmount(){
+        return config.max_size();
     }
 }

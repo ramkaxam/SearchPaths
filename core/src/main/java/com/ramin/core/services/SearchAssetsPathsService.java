@@ -84,4 +84,7 @@ public class SearchAssetsPathsService implements ISearchPaths{
         }
         return ret;
     }
+    public int getMaxAmount(){
+        return config.max_size();
+    }
 }
