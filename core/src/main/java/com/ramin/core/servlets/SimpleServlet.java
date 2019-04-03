@@ -36,11 +36,13 @@ import java.io.IOException;
  * idempotent. For write operations use the {@link SlingAllMethodsServlet}.
  */
 @Component(service=Servlet.class,
+           name="Ramin",
            property={
                    Constants.SERVICE_DESCRIPTION + "=Simple Demo Servlet",
                    "sling.servlet.methods=" + HttpConstants.METHOD_GET,
                    "sling.servlet.resourceTypes="+ "searchpaths/components/structure/page",
-                   "sling.servlet.extensions=" + "txt"
+                   "sling.servlet.extensions=" + "txt",
+                   "sling.servlet.paths=/bin/productdata"
            })
 public class SimpleServlet extends SlingSafeMethodsServlet {
 
