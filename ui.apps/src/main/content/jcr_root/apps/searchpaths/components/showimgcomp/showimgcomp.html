@@ -1,10 +1,6 @@
-<div id="titleImg" titleImgAttr="I'm hero"></div>
-
-${properties.hidingText}
-
-<img id="imgmy"
-     src="/content/dam/we-retail/en/people/womens/women_6.jpg"  />
-
+<div id="titleImg" titleImgAttr="${properties.hidingText}"></div>
+<p style="titleImgPage">Hidden text : ${properties.hidingText}</p>
+<img id="imgmy" src="${properties.usedImgPath}" />
 <sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html" />
 <sly data-sly-call="${clientlib.css @ categories='viewimg'}" />
 <sly data-sly-call="${clientlib.js @ categories='viewimg'}" />

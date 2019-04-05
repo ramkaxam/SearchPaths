@@ -6,7 +6,7 @@
         cq:contextHubSegmentsPath="/etc/segmentation/contexthub"
         cq:template="/conf/searchpaths/settings/wcm/templates/content-page"
         jcr:primaryType="cq:PageContent"
-        jcr:title="English"
+        jcr:title="ShowImg"
         sling:resourceType="searchpaths/components/structure/page"
         pageTitle="New Project"
         socialMedia="[facebook]">
