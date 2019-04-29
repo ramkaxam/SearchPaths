@@ -18,7 +18,7 @@ import java.util.Enumeration;
                    Constants.SERVICE_DESCRIPTION + "=Mens filter",
                    EngineConstants.SLING_FILTER_SCOPE + "=" + EngineConstants.FILTER_SCOPE_REQUEST,
                    Constants.SERVICE_RANKING + ":Integer=-700",
-                   "sling.filter.pattern=/content/.*men.*.html"
+                   "sling.filter.pattern=(/.*)?men(/.*)?.html"
            })
 public class MensFilter implements Filter {
     private FilterConfig filterConfig;
