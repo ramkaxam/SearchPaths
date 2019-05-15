@@ -16,13 +16,18 @@
 package com.ramin.core.listeners;
 
 import org.apache.sling.api.SlingConstants;
+import org.apache.sling.event.jobs.JobManager;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A service to demonstrate how changes in the resource tree
@@ -36,14 +41,27 @@ import org.slf4j.LoggerFactory;
            immediate = true,
            property = {
                    Constants.SERVICE_DESCRIPTION + "=Demo to listen on changes in the resource tree",
-                   EventConstants.EVENT_TOPIC + "=org/apache/sling/api/resource/Resource/*"
+                   EventConstants.EVENT_TOPIC + "=org/apache/sling/api/resource/Resource/ADDED"
+                   //EventConstants.EVENT_TOPIC + "=org/apache/sling/api/resource/Resource/*"
            })
+
 public class SimpleResourceListener implements EventHandler {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Reference
+    private JobManager jobManager;
+
+
     public void handleEvent(final Event event) {
-        logger.debug("Resource event: {} at: {}", event.getTopic(), event.getProperty(SlingConstants.PROPERTY_PATH));
+
+//        final Map<String, Object> props = new HashMap<String, Object>();
+//        props.put("item1", "/something");
+//        props.put("count", 5);
+//
+//        jobManager.addJob("my/special/jobtopic", props);
+
+//        logger.info("Resource event: {} at: {}", event.getTopic(), event.getProperty(SlingConstants.PROPERTY_PATH));
     }
 }
 

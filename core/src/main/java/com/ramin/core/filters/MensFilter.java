@@ -2,8 +2,11 @@ package com.ramin.core.filters;
 
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.engine.EngineConstants;
+import org.apache.sling.event.jobs.JobManager;
+import org.apache.sling.models.annotations.injectorspecific.OSGiService;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.servlet.*;
@@ -11,6 +14,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component(service = Filter.class,
            name = "MensFilter",
@@ -27,10 +32,12 @@ public class MensFilter implements Filter {
     private final static String sourceForReplace="men";
     private final static String propertyNameReplacement="mensConfig";
 
+
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain filterChain)
             throws IOException, ServletException {
         logger.info("doFilter");
+
         ServletResponse oldResponse = new CharResponseWrapper((SlingHttpServletResponse) response);
         filterChain.doFilter(request, oldResponse);
         String oldResponseString = oldResponse.toString();
@@ -53,4 +60,6 @@ public class MensFilter implements Filter {
     @Override
     public void destroy() {
     }
+
+
 }
