@@ -15,6 +15,7 @@
  */
 package com.ramin.core.listeners;
 
+
 import org.apache.sling.api.SlingConstants;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -31,6 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
+import javax.jcr.Session;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionManager;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -47,6 +51,7 @@ import java.util.Map;
            })
 
 public class ModifyListener implements EventHandler {
+    private static long counts=0;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -61,32 +66,48 @@ public class ModifyListener implements EventHandler {
 
 
     public void handleEvent(final Event event) {
+        counts++;
         String eventPath = (String)event.getProperty(SlingConstants.PROPERTY_PATH);
+        logger.info("\n\n"+"["+counts+"]"+"go into handle event: "+eventPath);
 
         Map<String, Object> param = new HashMap<String, Object>();
         param.put(ResourceResolverFactory.SUBSERVICE, serviceNameForLogin);
         ResourceResolver resolver = null;
         try {
             resolver = resolverFactory.getServiceResourceResolver(param);
+            Session session = resolver.adaptTo(Session.class);
+            VersionManager vManager = session.getWorkspace().getVersionManager();
+
+            //String pathToNode = "/content/searchpaths/en";
             Resource resource = resolver.getResource(eventPath);
 
-            boolean isItPage = false;
             ValueMap readMap = resource.getValueMap();
             String nodeType = (String) readMap.get("jcr:primaryType");
-            if(nodeType.equals("cq:Page")){
-                logger.info("its page");
 
+            if(nodeType.equals("cq:Page")){
+                logger.info("It's cq:Page");
+            }else{
+                logger.info("It's not cq:Page");
             }
 
+            Node nd = resource.adaptTo(Node.class);
+
+//            try {
+//                nd.addMixin("mix:versionable");
+//            }catch(Exception ex){
+//
+//            }
+//
+//            session.save();
+//            Version firstVersion = vManager.checkin(nd.getPath());
+//            logger.info("Version: "+firstVersion);
 
 
-//                String val = (String)map.get(key);
-//                if(key.equals("jcr:primaryType")&&val.equals("cq:Page")){
-//                    isItPage=true;
-//                }
-
-
-            logger.info("res="+resource.getPath()+" isItPage="+isItPage+" "+nodeType);
+//            Resource resource = resolver.getResource(eventPath);
+//            boolean isItPage = false;
+//            ValueMap readMap = resource.getValueMap();
+//            String nodeType = (String) readMap.get("jcr:primaryType");
+//            logger.info("res="+resource.getPath()+" isItPage="+isItPage+" "+nodeType);
 
 
             //resolver.commit();
