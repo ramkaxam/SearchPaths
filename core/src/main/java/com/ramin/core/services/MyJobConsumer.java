@@ -30,7 +30,7 @@ public class MyJobConsumer implements JobConsumer {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private static final String logRemoveNodeName = "remNode";
     private static final String pathForLogNodes = "/var/log/removedNodes";
-    private static final String serviceNameForLogin = "readService";
+    private static final String serviceNameForLogin = "removeJobConsumerService";
 
     @Reference
     private ResourceResolverFactory resolverFactory;

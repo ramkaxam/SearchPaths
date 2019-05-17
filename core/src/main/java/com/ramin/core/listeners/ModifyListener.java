@@ -16,6 +16,7 @@
 package com.ramin.core.listeners;
 
 
+import com.day.cq.wcm.api.*;
 import org.apache.sling.api.SlingConstants;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -39,6 +40,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 
@@ -46,8 +48,9 @@ import java.util.Map;
            immediate = true,
            property = {
                    Constants.SERVICE_DESCRIPTION + "=modify listener",
-                   EventConstants.EVENT_TOPIC + "=org/apache/sling/api/resource/Resource/CHANGED",
-                   EventConstants.EVENT_FILTER+"=(path=/content/searchpaths/*)"
+                   EventConstants.EVENT_TOPIC + "=com/day/cq/wcm/core/page"
+                   //EventConstants.EVENT_TOPIC + "=org/apache/sling/api/resource/Resource/CHANGED",//"com/day/cq/wcm/core/page"
+                  // EventConstants.EVENT_FILTER+"=(modifications:dn:=/content/searchpaths/*)"
            })
 
 public class ModifyListener implements EventHandler {
@@ -64,50 +67,59 @@ public class ModifyListener implements EventHandler {
 
     private static final String serviceNameForLogin = "modifyListenService";
 
+    private Resource getParentPage(Resource childRes){
+        String pathToPage = "";
+        Resource pRes = childRes;
+        while(pRes!=null){
+            ValueMap readMap = pRes.getValueMap();
+            String nodeType = (String) readMap.get("jcr:primaryType");
+            if(nodeType.equals("cq:Page")){
+                //logger.info("It's cq:Page");
+                return pRes;
+            }else{
+                //logger.info("It's not cq:Page");
+            }
+            pRes=pRes.getParent();
+        }
+        return null;
 
-    public void handleEvent(final Event event) {
+    }
+
+     public void handleEvent(final Event event) {
+        logger.info("["+counts+"]handle event: "+event);
         counts++;
-        String eventPath = (String)event.getProperty(SlingConstants.PROPERTY_PATH);
-        logger.info("\n\n"+"["+counts+"]"+"go into handle event: "+eventPath);
-
-        Map<String, Object> param = new HashMap<String, Object>();
-        param.put(ResourceResolverFactory.SUBSERVICE, serviceNameForLogin);
+        PageEvent pEv = PageEvent.fromEvent(event);
+        String eventPath = "";
         ResourceResolver resolver = null;
         try {
-            resolver = resolverFactory.getServiceResourceResolver(param);
-            Session session = resolver.adaptTo(Session.class);
-            VersionManager vManager = session.getWorkspace().getVersionManager();
+            if (pEv != null && pEv.isLocal()) {
+                Iterator<PageModification> modificationsIterator = pEv.getModifications();
+                while (modificationsIterator.hasNext()) {
+                    PageModification modification = modificationsIterator.next();
+                    if (PageModification.ModificationType.MODIFIED.equals(modification.getType())) {
+                        eventPath = modification.getPath();
+                        logger.info("get attr path="+eventPath);
+                        Map<String, Object> param = new HashMap<String, Object>();
+                        param.put(ResourceResolverFactory.SUBSERVICE, serviceNameForLogin);
 
-            //String pathToNode = "/content/searchpaths/en";
-            Resource resource = resolver.getResource(eventPath);
 
-            ValueMap readMap = resource.getValueMap();
-            String nodeType = (String) readMap.get("jcr:primaryType");
+                        resolver = resolverFactory.getServiceResourceResolver(param);
+                        Session session = resolver.adaptTo(Session.class);
 
-            if(nodeType.equals("cq:Page")){
-                logger.info("It's cq:Page");
-            }else{
-                logger.info("It's not cq:Page");
+                        PageManager pageManager = resolver.adaptTo(PageManager.class);
+                        Page currentPage = pageManager.getPage(eventPath);
+                        logger.info("currentPage="+currentPage);
+                        Revision rev = pageManager.createRevision(currentPage);
+                        logger.info("rev="+rev);
+
+                        Resource resource = resolver.getResource(eventPath);
+                    }
+                }
             }
 
-            Node nd = resource.adaptTo(Node.class);
-
-//            try {
-//                nd.addMixin("mix:versionable");
-//            }catch(Exception ex){
-//
-//            }
-//
-//            session.save();
-//            Version firstVersion = vManager.checkin(nd.getPath());
-//            logger.info("Version: "+firstVersion);
 
 
-//            Resource resource = resolver.getResource(eventPath);
-//            boolean isItPage = false;
-//            ValueMap readMap = resource.getValueMap();
-//            String nodeType = (String) readMap.get("jcr:primaryType");
-//            logger.info("res="+resource.getPath()+" isItPage="+isItPage+" "+nodeType);
+
 
 
             //resolver.commit();
@@ -121,7 +133,7 @@ public class ModifyListener implements EventHandler {
         }
 
 
-        logger.info("Resource event: {} at: {}", event.getTopic(),eventPath );
+
     }
 }
 
