@@ -1,24 +1,21 @@
 package com.ramin.core.listeners;
 
 
-import org.apache.sling.api.resource.*;
+
 import org.apache.sling.event.jobs.JobManager;
 import org.apache.sling.jcr.api.SlingRepository;
-import org.apache.sling.models.annotations.injectorspecific.Self;
+
 import org.osgi.service.component.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,13 +29,9 @@ import java.util.Map;
         }
 )
 public class RemoveListener implements EventListener {
-    @Reference
-    private JobManager jobManager;
-
-    @Reference
-    private SlingRepository repository;
-
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private static final String serviceNameForLogin = "removeListenerService";
 
     private final int events = Event.NODE_REMOVED;
     private final String absPath = "/content/searchpaths";
@@ -47,6 +40,12 @@ public class RemoveListener implements EventListener {
     private final String[] uuids = null;
     private final String[] nodeTypes = null;
     private Session observationSession = null;
+
+    @Reference
+    private JobManager jobManager;
+
+    @Reference
+    private SlingRepository repository;
 
 
     public void onEvent(final EventIterator events) {
@@ -62,10 +61,8 @@ public class RemoveListener implements EventListener {
                 addJob(name, realPath);
             }catch (RepositoryException ex){
                 logger.info(ex.toString());
-
             }
         }
-
     }
 
 
@@ -91,7 +88,7 @@ public class RemoveListener implements EventListener {
     @Modified
     protected void activate() throws RepositoryException {
         logger.info("Activate RemoveListener");
-        observationSession = repository.loginService("eventService",null);
+        observationSession = repository.loginService(serviceNameForLogin,null);
         final ObservationManager observationManager  = observationSession.getWorkspace().getObservationManager();
         observationManager.addEventListener(this, events, absPath, isDeep,
                 uuids, nodeTypes, noLocal);
@@ -102,23 +99,14 @@ public class RemoveListener implements EventListener {
     protected void deactivate() throws RepositoryException{
         logger.info("Deactivate RemoveListener");
         try {
-
             final ObservationManager observationManager = observationSession.getWorkspace().getObservationManager();
-
             if (observationManager != null) {
-
                 observationManager.removeEventListener(this);
             }
         } finally {
-
             if (observationSession != null) {
                 observationSession.logout();
             }
         }
     }
-
-
-
-
-
 }

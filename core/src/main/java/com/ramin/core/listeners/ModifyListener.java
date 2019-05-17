@@ -17,12 +17,9 @@ package com.ramin.core.listeners;
 
 
 import com.day.cq.wcm.api.*;
-import org.apache.sling.api.SlingConstants;
-import org.apache.sling.api.resource.Resource;
+
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
-import org.apache.sling.api.resource.ValueMap;
-import org.apache.sling.event.jobs.JobManager;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -32,16 +29,12 @@ import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
-import javax.jcr.Session;
-import javax.jcr.version.Version;
-import javax.jcr.version.VersionManager;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 
 @Component(service = EventHandler.class,
@@ -49,43 +42,20 @@ import java.util.Map;
            property = {
                    Constants.SERVICE_DESCRIPTION + "=modify listener",
                    EventConstants.EVENT_TOPIC + "=com/day/cq/wcm/core/page"
-                   //EventConstants.EVENT_TOPIC + "=org/apache/sling/api/resource/Resource/CHANGED",//"com/day/cq/wcm/core/page"
-                  // EventConstants.EVENT_FILTER+"=(modifications:dn:=/content/searchpaths/*)"
            })
-
 public class ModifyListener implements EventHandler {
-    private static long counts=0;
-
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static String observedPath = "/content/searchpaths";
-    @Reference
-    private JobManager jobManager;
+    private static final String serviceNameForLogin = "modifyListenService";
+
+    private static long counts=0;
 
     @Reference
     private ResourceResolverFactory resolverFactory;
 
-    private static final String serviceNameForLogin = "modifyListenService";
 
-    private Resource getParentPage(Resource childRes){
-        String pathToPage = "";
-        Resource pRes = childRes;
-        while(pRes!=null){
-            ValueMap readMap = pRes.getValueMap();
-            String nodeType = (String) readMap.get("jcr:primaryType");
-            if(nodeType.equals("cq:Page")){
-                //logger.info("It's cq:Page");
-                return pRes;
-            }else{
-                //logger.info("It's not cq:Page");
-            }
-            pRes=pRes.getParent();
-        }
-        return null;
-
-    }
-
-     public void handleEvent(final Event event) {
+    public void handleEvent(final Event event) {
         logger.info("["+counts+"]handle event: "+event);
         counts++;
         PageEvent pEv = PageEvent.fromEvent(event);
@@ -99,30 +69,23 @@ public class ModifyListener implements EventHandler {
                     if (PageModification.ModificationType.MODIFIED.equals(modification.getType())) {
                         eventPath = modification.getPath();
                         logger.info("get attr path="+eventPath);
-                        Map<String, Object> param = new HashMap<String, Object>();
-                        param.put(ResourceResolverFactory.SUBSERVICE, serviceNameForLogin);
-
-
-                        resolver = resolverFactory.getServiceResourceResolver(param);
-                        Session session = resolver.adaptTo(Session.class);
-
-                        PageManager pageManager = resolver.adaptTo(PageManager.class);
-                        Page currentPage = pageManager.getPage(eventPath);
-                        logger.info("currentPage="+currentPage);
-                        Revision rev = pageManager.createRevision(currentPage);
-                        logger.info("rev="+rev);
-
-                        Resource resource = resolver.getResource(eventPath);
+                        final Pattern pattern = Pattern.compile("/content/searchpaths.*");
+                        if (!pattern.matcher(eventPath).matches()) {
+                            logger.info("invalid event path:"+eventPath);
+                        }
+                        else{
+                            Map<String, Object> param = new HashMap<String, Object>();
+                            param.put(ResourceResolverFactory.SUBSERVICE, serviceNameForLogin);
+                            resolver = resolverFactory.getServiceResourceResolver(param);
+                            PageManager pageManager = resolver.adaptTo(PageManager.class);
+                            Page currentPage = pageManager.getPage(eventPath);
+                            logger.info("currentPage="+currentPage);
+                            Revision rev = pageManager.createRevision(currentPage);
+                            logger.info("rev="+rev);
+                        }
                     }
                 }
             }
-
-
-
-
-
-
-            //resolver.commit();
         }
         catch(Exception exs){
             logger.info(exs.toString());
@@ -131,9 +94,6 @@ public class ModifyListener implements EventHandler {
                 resolver.close();
             }
         }
-
-
-
     }
 }
 
